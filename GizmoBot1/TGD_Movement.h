@@ -1,74 +1,56 @@
 #ifndef __TGD_MOVEMENT_H_
 #define __TGD_MOVEMENT_H_
 
+// 5/26/15 moving implementation to .c, replacing halting code with event shindig
+
+// gTimer needs to be incremented in the main body of code each ms. 
+// In the arduino's main loop, call move_Events()
+
+extern int gTimer;
+
+
+//HW def
 #define forwardPin 7
-#define backPin 6
-#define leftPin 5
-#define rightPin 4
+#define backPin    6
+#define leftPin    5
+#define rightPin   4
+//Out of curiosity what does the car do when told to go forwards AND backwards at the same time?
+
+//millisec of counter-thrust to halt movement. ie, stop coasting.
+#define HALT_PULSE_DURATION 50
+
+#define HALT_OFF     0 
+#define HALT_FORWARD 1 
+#define HALT_REVERSE 2
+
 
 // Initialize movement library - eliminate floating voltages and set pins to output
-void init_movement() {
-  digitalWrite(forwardPin, LOW);
-  digitalWrite(backPin, LOW);
-  digitalWrite(leftPin, LOW);
-  digitalWrite(rightPin, LOW);
-  
-  pinMode(forwardPin, OUTPUT);
-  pinMode(backPin, OUTPUT);
-  pinMode(leftPin, OUTPUT);
-  pinMode(rightPin, OUTPUT);
-}
+void move_init();
+
+// Handles timed events
+void move_events();
+
+//You could also have... you know... just_move_forward().  No stop time. Depend on the sensors/gps to tell you when to stop.  Whatever floats your autonomous boat.
 
 // Move forward and coast
-void move_forward(ms_time) {
-  pinMode(forwardPin, INPUT);
-  delay(ms_time);
-  pinMode(forwardPin, OUTPUT);
-}
+void move_forward(int ms_time);
 
 // Move forward and stop
-void move_forward_stop(ms_time) {
-  pinMode(forwardPin, INPUT);
-  delay(ms_time);
-  pinMode(forwardPin, OUTPUT);
-  pinMode(backPin, INPUT);
-  delay(50);
-  pinMode(backPin, OUTPUT);
-}
+void move_forwardStop(int ms_time);
 
 // Move in reverse and coast
-void move_reverse(ms_time) {
-  pinMode(backPin, INPUT);
-  delay(ms_time);
-  pinMode(backPin, OUTPUT);
-}
+void move_reverse(int ms_time);
 
 // Move in reverse and stop
-void move_reverse_stop(ms_time) {
-  pinMode(backPin, INPUT);
-  delay(ms_time);
-  pinMode(backPin, OUTPUT);
-  pinMode(forwardPin, INPUT);
-  delay(50);
-  pinMode(forwardPin, OUTPUT);
-}
+void move_reverseStop(int ms_time);
 
 // Turn wheels left
-void wheels_left(){
-  pinMode(rightPin, OUTPUT);
-  pinMode(leftPin, INPUT);
-}
+void move_wheelsLeft();
 
 // Turn wheels right
-void wheels_right(){
-  pinMode(leftPin, OUTPUT);
-  pinMode(rightPin, INPUT);
-}
+void move_wheelsRight();
 
 // Center wheels
-void wheels_center(){
-  pinMode(rightPin, OUTPUT);
-  pinMode(leftPin, OUTPUT);
-}
+void move_wheelsCenter();
 
 #endif __TGD_MOVEMENT_H_

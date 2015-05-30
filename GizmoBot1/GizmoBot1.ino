@@ -9,6 +9,8 @@
 #include "TGD_Movement.h" // Set pin assignments in "TGD_Movement.h"
 #include "location.h"
 
+#include <SimpleTimer.h> //Or whatever, I just grabbed the first one I found. Hopefully it doesn't interfere with whatever timer the GPS is using
+
 /** init_gps() */
 void init_gps() {
   Serial.print(F("init_gps() ... "));
@@ -28,24 +30,31 @@ void init_gps() {
   Serial.println(F("OK!"));
 }
 
+
+void isr1ms()
+{
+  gTimer++; //Increment timer for move_events
+}
+
 void setup() {
   // put your setup code here, to run once:
-  init_movement();
-  
-  move_forward_stop(1000);     // Move forward for one second and stop.
-  delay(500);                  // Pause for half a second.
-  move_reverse_stop(1000);     // Move backwards for one second and stop.
-  delay(500);                  // Pause for half a second.
-  wheels_left();               // Turn wheels left.
-  move_forward_stop(750);      // Move forward while turning left for 0.75 seconds.
-  delay(500);                  // Pause for half a second.
-  move_reverse_stop(750);      // Move backwards with wheels turned left for 0.75 seconds.
-  delay(500);                  // Pause for half a second.
-  wheels_right();              // Turn wheels right.
-  move_forward_stop(750);      // Move forward while turning right for 0.75 seconds.
-  delay(500);                  // Pause for half a second.
-  move_reverse_stop(750);      // Move backwards with wheels turned right for 0.75 seconds.
-  wheels_center();             // Turn wheels to point straight forward.
+  move_init();
+  timer.setInterval(1, isr1ms);  //I've no idea if a 1ms isr will choke an arduino
+ 
+  move_forwardStop(1000);     // Move forward for one second and stop.
+  delay(1500);                // Pause for one and a half seconds to let that happen.
+  move_reverseStop(1000);     // Move backwards for one second and stop.
+  delay(1500);                // Pause to let that happen. I could look at sensors here. 
+  move_wheelsLeft();          // Turn wheels left.
+  move_forwardStop(750);      // Move forward while turning left for 0.75 seconds.
+  delay(1500);                // Pause to let that happen. 
+  move_reverseStop(750);      // Move backwards with wheels turned left for 0.75 seconds.
+  delay(1500);                // Pause to let that happen.
+  wheels_right();             // Turn wheels right.
+  move_forwardStop(750);      // Move forward while turning right for 0.75 seconds.
+  delay(1500);                // Pause to let that happen.
+  move_reverseStop(750);      // Move backwards with wheels turned right for 0.75 seconds.
+  move_wheelsCenter();        // Turn wheels to point straight forward.
    
 
 }
@@ -61,4 +70,5 @@ void loop() {
   // check for obstacles.
   // move forward for 1 second and stop.
 
+  timer.run();  
 }
